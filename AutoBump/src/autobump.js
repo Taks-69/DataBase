@@ -1,24 +1,3 @@
-// ─── FIX PKG + UNDICI ─────────────────────────────
-
-const { ReadableStream, WritableStream, TransformStream } = require('stream/web');
-
-// On définit les classes vides pour éviter le crash si Node ne les a pas nativement
-if (typeof global.File === 'undefined') global.File = class File {};
-if (typeof global.Blob === 'undefined') global.Blob = class Blob {};
-if (typeof global.Headers === 'undefined') global.Headers = class Headers {};
-if (typeof global.Request === 'undefined') global.Request = class Request {};
-if (typeof global.Response === 'undefined') global.Response = class Response {};
-if (typeof global.FormData === 'undefined') global.FormData = class FormData {};
-
-if (typeof global.ReadableStream === 'undefined') global.ReadableStream = ReadableStream;
-if (typeof global.WritableStream === 'undefined') global.WritableStream = WritableStream;
-if (typeof global.TransformStream === 'undefined') global.TransformStream = TransformStream;
-
-const { TextEncoder, TextDecoder } = require('util');
-if (typeof global.TextEncoder === 'undefined') global.TextEncoder = TextEncoder;
-if (typeof global.TextDecoder === 'undefined') global.TextDecoder = TextDecoder;
-// ───────────────────────────────────────────────────────────────────
-
 const { Client } = require('discord.js-selfbot-v13');
 
 // ─── Arguments CLI ────────────────────────────────────────────────
@@ -27,7 +6,7 @@ const args = process.argv.slice(2);
 
 const TOKEN      = args[0];
 const CHANNEL_ID = args[1];
-const BOT_ID     = args[2] || '302050872113246208';
+const BOT_ID     = args[2] || '302050872383242240';
 
 if (!TOKEN) {
   console.error('[ERREUR] Token manquant. Usage: autobump.exe <token> <channel_id> [bot_id]');
