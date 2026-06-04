@@ -1,0 +1,19 @@
+{
+  "name": "autobump",
+  "version": "1.0.0",
+  "description": "",
+  "main": "autobump.js",
+  "bin": "autobump.js",
+  "scripts": {
+    "build": "pkg autobump.js --targets node18-win-x64 --output autobump.exe"
+  },
+  "dependencies": {
+    "debug": "^4.4.3",
+    "discord.js-selfbot-v13": "^3.7.1",
+    "sqlite": "^5.1.1"
+  },
+  "overrides": {
+    "sqlite": "4.2.1",
+    "undici": "5.28.4"
+  }
+}
