@@ -1,0 +1,21 @@
+{
+  "name": "dmall-bot",
+  "version": "1.0.0",
+  "description": "A bot that sends DMs to all members of a Discord server.",
+  "main": "bot.js",
+  "bin": "bot.js",
+  "scripts": {
+    "build": "caxa --input . --output dmall-bot.exe -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/bot.js\""
+  },
+  "dependencies": {
+    "debug": "^4.4.3",
+    "discord.js": "^14.18.0"
+  },
+  "devDependencies": {
+    "caxa": "latest"
+  },
+  "overrides": {
+    "sqlite": "4.2.1",
+    "undici": "5.28.4"
+  }
+}
