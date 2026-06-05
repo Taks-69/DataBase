@@ -1,18 +1,18 @@
 {
   "name": "autobump",
   "version": "1.0.0",
-  "description": "🤍🤍",
+  "description": "🖤🖤",
   "main": "autobump.js",
   "bin": "autobump.js",
   "scripts": {
-    "build": "pkg autobump.js --targets node22-win-x64 --output autobump.exe"
+    "build": "caxa --input . --output autobump.exe -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/autobump.js\""
   },
   "dependencies": {
     "debug": "^4.4.3",
     "discord.js-selfbot-v13": "^3.7.1"
   },
   "devDependencies": {
-    "@yao-pkg/pkg": "^6.4.0"
+    "caxa": "latest"
   },
   "overrides": {
     "sqlite": "4.2.1",
