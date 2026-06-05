@@ -1,7 +1,7 @@
 {
   "name": "autobump",
   "version": "1.0.0",
-  "description": "🖤🖤",
+  "description": "A selfbot that automatically bumps your server on Disboard.",
   "main": "autobump.js",
   "bin": "autobump.js",
   "scripts": {
