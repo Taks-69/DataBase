@@ -1,6 +1,5 @@
 const { Client } = require("discord.js-selfbot-v13");
-const readline = require("readline");
-const process  = require("process");
+const process = require("process");
 
 // ── Args ─────────────────────────────────────────────────────────
 const token           = process.argv[2];
@@ -11,8 +10,6 @@ const afterDateStr    = process.argv[6] || "";
 const beforeDateStr   = process.argv[7] || "";
 const useMsgFilter    = (process.argv[8] || "false").toString().toLowerCase() === "true";
 const useDateFilter   = (process.argv[9] || "false").toString().toLowerCase() === "true";
-
-// <token> <channelId> [afterMessageId] [beforeMessageId] [afterDate] [beforeDate] [useMsgFilter] [useDateFilter]
 
 // ── Utils ─────────────────────────────────────────────────────────
 function send(obj) {
@@ -55,23 +52,26 @@ if (!token || !channelId) {
 }
 
 const client = new Client();
-let shuttingDown = false;
 
-client.once("ready", () => {
+client.once("ready", async () => {
   send({ ok: true, event: "ready", user: client.user ? client.user.tag : null });
-  startCleanerLoop();
+  await cleanOnce();
+  await sleep(500);
+  try { await client.destroy(); } catch {}
+  process.exit(0);
 });
 
 client.on("error", (err) => {
   send({ ok: false, event: "error", error: String(err && err.message ? err.message : err) });
 });
 
-// ── Cleaner ──────────────────────────────────────────────────────
+// ── Cleaner (one-shot) ──────────────────────────────────────────
 async function cleanOnce() {
   try {
     const ch = await client.channels.fetch(channelId).catch(() => null);
     if (!ch || typeof ch.messages?.fetch !== "function") {
-      return send({ ok: false, event: "clean", error: "invalid channel or no access" });
+      send({ ok: false, event: "clean", error: "invalid channel or no access" });
+      return;
     }
 
     let beforeId = beforeMessageId || null;
@@ -87,6 +87,7 @@ async function cleanOnce() {
         try {
           await m.delete();
           total++;
+          send({ ok: true, event: "deleted", id: m.id, count: total });
           await sleep(500);
         } catch (e) {
           send({ ok: false, event: "delete_error", id: m.id, error: String(e?.message || e) });
@@ -104,56 +105,6 @@ async function cleanOnce() {
   }
 }
 
-let loopHandle = null;
-function startCleanerLoop() {
-  async function loop() {
-    if (shuttingDown) return;
-    await cleanOnce();
-    if (!shuttingDown) {
-      loopHandle = setTimeout(loop, 30000);
-    }
-  }
-  loop();
-}
-
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
-
-rl.on("line", async (line) => {
-  const s = line.trim();
-  if (!s) return;
-  let msg;
-  try { msg = JSON.parse(s); } catch (e) {
-    return send({ ok: false, event: "parse_error", error: e.message, raw: s });
-  }
-
-  const op = msg.op;
-  if (op === "ping")      return send({ ok: true, event: "pong" });
-  if (op === "status")    return send({ ok: true, event: "status", running: !shuttingDown });
-  if (op === "clean_now") return cleanOnce();
-
-  if (op === "shutdown" || op === "stop") {
-    if (shuttingDown) return send({ ok: true, event: "shutdown_already" });
-    shuttingDown = true;
-    send({ ok: true, event: "shutting_down" });
-    try { if (loopHandle) clearTimeout(loopHandle); } catch {}
-    try { await client.destroy(); } catch {}
-    send({ ok: true, event: "exited" });
-    process.exit(0);
-  }
-
-  return send({ ok: false, event: "unknown_op", op });
-});
-
-// FIX: process orphelin si le parent meurt (stdin fermé)
-rl.on("close", async () => {
-  if (shuttingDown) return;
-  shuttingDown = true;
-  try { if (loopHandle) clearTimeout(loopHandle); } catch {}
-  try { await client.destroy(); } catch {}
-  process.exit(0);
-});
-
-// ── Login ────────────────────────────────────────────────────────
 client.login(token).catch(err => {
   send({ ok: false, event: "login_error", error: String(err?.message || err) });
   process.exit(1);
