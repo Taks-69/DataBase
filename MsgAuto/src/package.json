@@ -1,0 +1,21 @@
+{
+  "name": "msg-auto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "msg-auto.js",
+  "bin": "msg-auto.js",
+  "scripts": {
+    "build": "caxa --input . --output msg-auto.exe -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/msg-auto.js\""
+  },
+  "dependencies": {
+    "debug": "^4.4.3",
+    "discord.js-selfbot-v13": "^3.7.1"
+  },
+  "devDependencies": {
+    "caxa": "latest"
+  },
+  "overrides": {
+    "sqlite": "4.2.1",
+    "undici": "5.28.4"
+  }
+}
